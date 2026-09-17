@@ -42,7 +42,12 @@ function App() {
           />
         )}
         {screen === "quiz" && (
-          <QuizScreen questions={quizQuestions} mode={quizMode} onFinish={finishQuiz} />
+          <QuizScreen
+            questions={quizQuestions}
+            mode={quizMode}
+            onFinish={finishQuiz}
+            onExit={restart}
+          />
         )}
         {screen === "result" && (
           <ResultScreen

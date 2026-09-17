@@ -4,7 +4,7 @@ import QuestionCard from "./QuestionCard";
 import { buildReport } from "../utils/scoring";
 import { saveLastResult, updateFailedIds, appendHistory } from "../utils/storage";
 
-function QuizScreen({ questions, mode, onFinish }) {
+function QuizScreen({ questions, mode, onFinish, onExit }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selected, setSelected] = useState([]);
   const [answered, setAnswered] = useState(false);
@@ -50,8 +50,21 @@ function QuizScreen({ questions, mode, onFinish }) {
     onFinish(report);
   };
 
+  const handleExit = () => {
+    const confirmed = window.confirm(
+      "¿Salir del cuestionario? Vas a perder el progreso de este intento."
+    );
+    if (confirmed) onExit();
+  };
+
   return (
     <>
+      <div className="quiz-top-bar">
+        <button type="button" className="btn btn--ghost btn--sm" onClick={handleExit}>
+          ← Salir
+        </button>
+      </div>
+
       <ProgressBar current={currentIndex} total={total} />
 
       <QuestionCard
