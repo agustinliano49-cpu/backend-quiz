@@ -561,6 +561,8 @@ textarea {
 .option-label {
   flex: 1;
   line-height: 1.4;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .option-icon {

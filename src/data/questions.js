@@ -2376,6 +2376,76 @@ try (var lector = Files.newBufferedReader(ruta)) {
     correct: [0],
     explanation: `map recibe una Function y genera un nuevo valor, incluso de otro tipo, por cada elemento (Apunte 10, p. 8). Eliminar repetidos corresponde a distinct, y map no construye pares clave-valor.`,
   },
+  // ============================= PARCIALES: consignas de desarrollo convertidas a opción única =============================
+  {
+    id: 160,
+    source: "parcial",
+    topic: "Herencia y Polimorfismo",
+    difficulty: "alta",
+    text: `Servicio valida un precio base no negativo. ServicioUrgente debe conservar esa validación, aceptar un recargo entre 1 y 100 inclusive y devolver precio base más recargo mediante despacho polimórfico. Los valores inválidos deben lanzar IllegalArgumentException. Con Servicio s = new ServicioUrgente(50, 20), s.costo() debe devolver 70. ¿Qué código completa correctamente ServicioUrgente?
+class Servicio {
+    private final int precioBase;
+    Servicio(int precioBase) {
+        if (precioBase < 0) throw new IllegalArgumentException();
+        this.precioBase = precioBase;
+    }
+    int costo() { return precioBase; }
+}
+class ServicioUrgente extends Servicio {
+    private final int recargo;
+    // código a completar
+}`,
+    type: "single",
+    opts: [
+      `ServicioUrgente(int precioBase, int recargo) {
+super(precioBase);
+if (recargo < 1 || recargo > 100) throw new IllegalArgumentException();
+this.recargo = recargo;
+}
+@Override int costo() { return super.costo() + recargo; }`,
+      `ServicioUrgente(int precioBase, int recargo) {
+super(precioBase);
+if (recargo < 1 && recargo > 100) throw new IllegalArgumentException();
+this.recargo = recargo;
+}
+@Override int costo() { return super.costo() + recargo; }`,
+      `ServicioUrgente(int precioBase, int recargo) {
+super(precioBase);
+if (recargo < 0 || recargo > 100) throw new IllegalArgumentException();
+this.recargo = recargo;
+}
+@Override int costo() { return super.costo() + recargo; }`,
+      `ServicioUrgente(int precioBase, int recargo) {
+super(precioBase);
+if (recargo < 1 || recargo > 100) throw new IllegalArgumentException();
+this.recargo = recargo;
+}
+int costo(int precioBase) { return super.costo() + recargo; }`,
+      `ServicioUrgente(int precioBase, int recargo) {
+if (recargo < 1 || recargo > 100) throw new IllegalArgumentException();
+this.recargo = recargo;
+}
+@Override int costo() { return super.costo() + recargo; }`,
+    ],
+    correct: [0],
+    explanation: `super(precioBase) es obligatorio: sin esa llamada, Java intenta invocar un constructor default que Servicio no tiene y no compila (Apunte 08, p. 5). El rango se rechaza con recargo < 1 || recargo > 100: con && la condición nunca se cumple, y con < 0 se acepta el cero. Para redefinir hay que repetir la cabecera costo() tal cual (Apunte 08, p. 6): costo(int) es una sobrecarga y s.costo() devolvería 50. Consigna de desarrollo de los parciales 3K2, convertida a opción única.`,
+  },
+  {
+    id: 161,
+    source: "parcial",
+    topic: "Colecciones",
+    difficulty: "media",
+    text: `El reporte del parcial necesita devolver rápidamente un Alquiler por su id (de tipo String), por ejemplo para conciliar los alquileres procesados. Un compañero propone guardarlos en un ArrayList y buscar recorriendo la lista. ¿Qué evaluación es correcta?`,
+    type: "single",
+    opts: [
+      `No conviene: recorrer la lista es O(n). Conviene un HashMap<String, Alquiler> con el id como clave: acceso promedio O(1), a cambio de más memoria y sin garantizar un orden.`,
+      `Conviene: ArrayList accede en O(1) por índice, por lo que buscar un Alquiler por su id también es O(1) y no requiere memoria adicional.`,
+      `No conviene: debería usarse una LinkedList, porque sus enlaces permiten encontrar un Alquiler por su id en O(1), a cambio de más memoria por nodo.`,
+      `No conviene: debería usarse un HashSet<Alquiler>, porque su método get(id) devuelve el Alquiler en O(1), a cambio de no admitir repetidos.`,
+    ],
+    correct: [0],
+    explanation: `El O(1) de ArrayList vale para acceder por posición (Apunte 09, p. 21-22), pero el id no es una posición: hay que recorrer hasta encontrarlo, O(n). Un Map asocia cada clave a un valor (Apunte 09, p. 21), y HashMap lo resuelve en tiempo constante promedio, con el costo de memoria de la tabla y sin orden garantizado. LinkedList también recorre (Apunte 09, p. 22) y HashSet no tiene get(id). Consigna de desarrollo del parcial 3K3, convertida a opción única.`,
+  },
 ];
 
 export default questions;
