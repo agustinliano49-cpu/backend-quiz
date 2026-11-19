@@ -444,6 +444,7 @@ textarea {
   color: var(--color-ink-900);
   margin: 0;
   white-space: pre-line;
+  overflow-wrap: anywhere;
 }
 
 .question-hint {

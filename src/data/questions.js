@@ -2055,6 +2055,327 @@ for (String nombre : nombres) {
     correct: [1],
     explanation: `Un SortedSet es un Set que mantiene sus elementos en orden ascendente, con operaciones adicionales que aprovechan ese orden. No es "descendente" ni "desordenado".`,
   },
+  // ============================= PARCIALES: Q-Parcial 3K2 y 3K3 2026 (verificados) =============================
+  {
+    id: 141,
+    source: "parcial",
+    topic: "Introducción",
+    difficulty: "alta",
+    text: `La agencia recibe las altas de alquiler desde una web, desde una aplicación de escritorio y desde una importación CSV que corre en el backend. La web ya calcula el importe estimado de un ABIERTO (dias × tarifaDiaria) y muestra un total. Al cambiar una tarifa, los tres caminos deben validar los mismos datos y liquidar el mismo importe, incluso si un cliente todavía muestra la tarifa anterior. ¿Qué organización satisface mejor ese requisito?`,
+    type: "single",
+    opts: [
+      `Validar en una operación compartida del backend, pero registrar el importe calculado por cada cliente o importador para conservar lo que vio el operador.`,
+      `Validar y calcular en cada endpoint del backend y repetir esas reglas en el importador; mantener iguales las copias mediante una especificación común.`,
+      `Concentrar validación y cálculo en operaciones del backend utilizadas por las altas de ambos clientes y por el importador; las pantallas pueden anticipar controles y mostrar estimaciones.`,
+      `Publicar días, tarifas y kilómetros incluidos en la API para que cada cliente valide y calcule; el backend registra los valores recibidos y el importador aplica su propia copia de las reglas.`,
+    ],
+    correct: [2],
+    explanation: `El backend es la capa donde se hacen cumplir las reglas del negocio (Apunte 01, p. 3). Si validación y cálculo están en una sola operación usada por las tres entradas, todas aplican la tarifa vigente. Las pantallas pueden anticipar controles, pero no definir el importe. Confiar en cada cliente o mantener copias de las reglas permite que los resultados difieran.`,
+  },
+  {
+    id: 142,
+    source: "parcial",
+    topic: "Introducción",
+    difficulty: "media",
+    text: `La web y la aplicación de escritorio registran alquileres mediante una API y consultan el detalle por identificador en un endpoint. Hoy el backend guarda los alquileres en una lista en memoria: mientras está encendido, ambos clientes ven los mismos datos; tras reiniciarlo, desaparecen. Se pide conservar los alquileres ya liquidados y permitir que ambos clientes sigan consultándolos con el mismo contrato. ¿Qué cambio cumple ambos objetivos?`,
+    type: "single",
+    opts: [
+      `Guardar en el backend el último total por sucursal y reconstruir al iniciar una lista de alquileres que produzca esos totales; mantener el endpoint de detalle por identificador.`,
+      `Conservar los alquileres en almacenamiento local de cada cliente y reenviarlos cuando vuelva a conectarse; mantener la lista del backend como fuente para el endpoint compartido.`,
+      `Guardar los alquileres aceptados en una base de datos en el backend y recuperarlos tras reiniciar; mantener la API de registro y consulta independiente de cómo se almacenan.`,
+      `Guardar los alquileres en un archivo del backend y hacer que cada cliente lea directamente ese archivo; conservar el endpoint únicamente para devolver el nombre del archivo.`,
+    ],
+    correct: [2],
+    explanation: `La base de datos da persistencia (Apunte 01, p. 3) y la API sigue siendo el mismo contrato entre aplicaciones (Apunte 14, p. 1), sin importar cómo se almacenen los datos. Guardar solo totales pierde los alquileres individuales, el almacenamiento local depende de cada cliente y leer el archivo directamente cambia la forma de acceso.`,
+  },
+  {
+    id: 143,
+    source: "parcial",
+    topic: "Streams",
+    difficulty: "alta",
+    text: `La clase Garage agrupa alquileres por estado con Collectors.groupingBy. Alquiler.estado() devuelve "ABIERTO" y AlquilerCerrado lo redefine para devolver "CERRADO". ¿Qué mapa construye este bloque?
+Map<String, Long> conteo = List.of(
+    new Alquiler("A", "Ana", "SEDAN", "Centro", 2, 5000.0, 300),
+    new AlquilerCerrado(new Alquiler("B", "Luis", "SUV", "Norte", 3, 7200.0, 450), 520, ...),
+    new AlquilerCerrado(new Alquiler("C", "Caro", "COMPACTO", "Sur", 1, 3800.0, 150), ...))
+    .stream()
+    .collect(Collectors.groupingBy(Alquiler::estado, Collectors.counting()));`,
+    type: "single",
+    opts: [
+      `No compila: Alquiler::estado no puede usarse como clave en un mapa.`,
+      `{ABIERTO=1, CERRADO=2}`,
+      `{Centro=1, Norte=1, Sur=1}`,
+      `{ABIERTO=2, CERRADO=1}`,
+    ],
+    correct: [1],
+    explanation: `groupingBy usa como clave lo que devuelve estado() y counting cuenta cada grupo (Apunte 10, p. 11). Por polimorfismo, A informa ABIERTO, y B y C informan CERRADO. La sucursal no interviene en la clave.`,
+  },
+  {
+    id: 144,
+    source: "parcial",
+    topic: "POO",
+    difficulty: "básica",
+    text: `Seleccione el modificador al que corresponde la definición: "Esta función de la clase X es accesible para todas las clases externas y por sí misma."`,
+    type: "multiple",
+    opts: [`private`, `default`, `protected`, `public`],
+    correct: [3],
+    explanation: `Un miembro public es accesible desde el interior de la clase y desde métodos de otras clases (Apunte 05, p. 3). private se limita a la propia clase, y protected y default no alcanzan a todas las clases externas.`,
+  },
+  {
+    id: 145,
+    source: "parcial",
+    topic: "Herencia y Polimorfismo",
+    difficulty: "media",
+    text: `El modificador static puede:`,
+    type: "multiple",
+    opts: [
+      `Declarar atributos de forma que el valor se actualice automáticamente entre todas las instancias de los objetos de dicha clase ante una modificación en algún objeto de la clase en cuestión.`,
+      `Declarar atributos de forma que el valor se comparta entre todas las instancias de los objetos de dicha clase.`,
+      `Declarar atributos de forma que el valor se mantenga en un valor y que no pueda ser modificado por ningún objeto instanciado.`,
+    ],
+    correct: [0, 1],
+    explanation: `Hay una única copia del atributo static y todas las instancias "ven" la misma variable (Apunte 08, p. 14). Por eso el valor se comparte y un cambio hecho desde un objeto se ve desde los demás. Impedir la modificación corresponde a final (Apunte 08, p. 21). En la revisión del parcial, marcar solo la segunda opción otorga la mitad del puntaje.`,
+  },
+  {
+    id: 146,
+    source: "parcial",
+    topic: "Arrays y Excepciones",
+    difficulty: "media",
+    text: `El método aceptar rechaza cantidades no positivas. ¿Qué imprime el programa?
+static int aceptar(int n) {
+    if (n <= 0) throw new IllegalArgumentException();
+    return n;
+}
+int total = 0, errores = 0;
+for (int n : new int[]{2, 0, 3}) {
+    try { total += aceptar(n); }
+    catch (IllegalArgumentException e) { errores++; }
+}
+System.out.println(total + ":" + errores);`,
+    type: "single",
+    opts: [`5:1`, `No imprime: la excepción abandona el for.`, `2:1`, `5:0`],
+    correct: [0],
+    explanation: `Con 2 y 3 se acumula total = 5. Con 0 se lanza la excepción antes de sumar, el catch incrementa errores y, como está dentro del for, el recorrido continúa. Resultado: 5:1.`,
+  },
+  {
+    id: 147,
+    source: "parcial",
+    topic: "Colecciones",
+    difficulty: "media",
+    text: `Se pretende acumular hojas por sector. ¿Qué resultado real produce este código?
+String[] sectores = {"N", "S", "N"};
+int[] hojas = {6, 2, 4};
+Map<String, Integer> resumen = new HashMap<>();
+for (int i = 0; i < sectores.length; i++) {
+    resumen.put(sectores[i], hojas[i]);
+}
+System.out.println(resumen.get("N") + ":" + resumen.get("S"));`,
+    type: "single",
+    opts: [
+      `10:2, porque put acumula automáticamente los valores.`,
+      `Lanza una excepción al repetir la clave N.`,
+      `6:2, porque un Map conserva siempre el primer valor de una clave.`,
+      `4:2, porque el último put para N reemplaza su valor.`,
+    ],
+    correct: [3],
+    explanation: `Un Map no tiene claves duplicadas y cada clave apunta a lo sumo a un valor (Apunte 09, p. 21). El segundo put de "N" reemplaza 6 por 4, y "S" conserva 2. Resultado: 4:2.`,
+  },
+  {
+    id: 148,
+    source: "parcial",
+    topic: "Herencia y Polimorfismo",
+    difficulty: "media",
+    text: `¿Qué valor se imprime?
+class Trabajo { int hojas() { return 4; } }
+class TrabajoConAnexo extends Trabajo {
+    @Override int hojas() { return super.hojas() + 2; }
+}
+List<Trabajo> trabajos = List.of(new Trabajo(), new TrabajoConAnexo());
+int total = 0;
+for (Trabajo t : trabajos) total += t.hojas();
+System.out.println(total);`,
+    type: "single",
+    opts: [
+      `No compila: List<Trabajo> no admite TrabajoConAnexo.`,
+      `12, porque todos adoptan el método de la subclase.`,
+      `8, porque el tipo declarado es Trabajo.`,
+      `10, porque se ejecuta el método de cada objeto concreto.`,
+    ],
+    correct: [3],
+    explanation: `Una referencia a la clase base puede apuntar a objetos derivados (Apunte 08, p. 7) y la JVM enlaza en ejecución la versión correcta del método (Apunte 08, p. 8). Se suman 4 del objeto Trabajo y 4 + 2 del objeto TrabajoConAnexo: 10.`,
+  },
+  {
+    id: 149,
+    source: "parcial",
+    topic: "Introducción",
+    difficulty: "básica",
+    text: `¿Qué se busca lograr al agrupar funcionalidad coherente dentro de un mismo microservicio?`,
+    type: "single",
+    opts: [
+      `Reducción de los niveles de seguridad.`,
+      `Separación de la lógica de negocio de los datos.`,
+      `Mayor dependencia entre capas internas del backend.`,
+      `Cohesión alta y menor acoplamiento entre servicios.`,
+    ],
+    correct: [3],
+    explanation: `Los límites de cada microservicio se definen para minimizar las dependencias y maximizar la cohesión dentro de cada uno (Apunte 01, p. 8).`,
+  },
+  {
+    id: 150,
+    source: "parcial",
+    topic: "Sintaxis Java",
+    difficulty: "básica",
+    text: `¿A qué nos referimos con convención camelCase?`,
+    type: "single",
+    opts: [
+      `Se refiere a la forma de escribir nombres de variables utilizando la notación camelCase, por ejemplo: "camionVerde".`,
+      `Se refiere a la forma de escribir nombres de variables utilizando la notación camel_case, por ejemplo: "camion_verde".`,
+      `Se refiere a la forma de escribir nombres de variables utilizando la notación CamelCase, por ejemplo: "CamionVerde".`,
+    ],
+    correct: [0],
+    explanation: `En camel case el identificador comienza con minúscula y cada nueva palabra se marca con una sola mayúscula (Apunte 04, p. 3). Por eso corresponde "camionVerde".`,
+  },
+  {
+    id: 151,
+    source: "parcial",
+    topic: "Streams",
+    difficulty: "básica",
+    text: `No hay que programar una clase nueva por cada expresión lambda creada.`,
+    type: "single",
+    opts: [`Verdadero`, `Falso`],
+    correct: [0],
+    explanation: `Las lambdas implementan interfaces funcionales sin crear explícitamente una clase nueva: se escribe directamente el bloque del método (Apunte 10, p. 4).`,
+  },
+  {
+    id: 152,
+    source: "parcial",
+    topic: "Colecciones",
+    difficulty: "alta",
+    text: `Etiqueta no redefine equals ni hashCode. ¿Qué imprime?
+class Etiqueta {
+    final String codigo;
+    Etiqueta(String codigo) { this.codigo = codigo; }
+}
+Etiqueta a = new Etiqueta("X");
+Etiqueta b = new Etiqueta("X");
+List<Etiqueta> etiquetas = List.of(a);
+System.out.println(etiquetas.contains(a) + ":" + etiquetas.contains(b));`,
+    type: "single",
+    opts: [
+      `No compila: contains requiere redefinir equals.`,
+      `false:false, porque List.of no permite buscar.`,
+      `true:true, porque los códigos son iguales.`,
+      `true:false, porque a y b son objetos distintos y se usa equals heredado.`,
+    ],
+    correct: [3],
+    explanation: `contains compara con equals. Etiqueta hereda equals de Object (Apunte 08, p. 4), que sin redefinir compara referencias: a es el mismo objeto de la lista y b es otra instancia, aunque tenga el mismo código.`,
+  },
+  {
+    id: 153,
+    source: "parcial",
+    topic: "Herencia y Polimorfismo",
+    difficulty: "básica",
+    text: `Al usar el modificador final en una clase estamos diciendo que dicha clase no puede ser derivada y que al intentarlo nos será entregado un error de compilación.`,
+    type: "single",
+    opts: [`Verdadero`, `Falso`],
+    correct: [0],
+    explanation: `Una clase final no puede ser derivada: no se puede declarar otra clase que herede de ella (Apunte 08, p. 21). Intentarlo produce un error de compilación.`,
+  },
+  {
+    id: 154,
+    source: "parcial",
+    topic: "Streams",
+    difficulty: "básica",
+    text: `La operación terminal count retorna la _____ de elementos del flujo.`,
+    type: "single",
+    opts: [`lista`, `cantidad`],
+    correct: [1],
+    explanation: `count retorna la cantidad de elementos del flujo (Apunte 10, p. 9).`,
+  },
+  {
+    id: 155,
+    source: "parcial",
+    topic: "Introducción",
+    difficulty: "básica",
+    text: `¿Qué responsabilidad principal tiene la subcapa de servicio en una aplicación backend modular?`,
+    type: "single",
+    opts: [
+      `Ejecutar las validaciones de formularios del frontend.`,
+      `Implementar la lógica de negocio asociada a la funcionalidad.`,
+      `Generar las vistas HTML enviadas al cliente.`,
+      `Gestionar las configuraciones del servidor web.`,
+    ],
+    correct: [1],
+    explanation: `Dentro de cada módulo, los controladores manejan las solicitudes HTTP, los servicios contienen la lógica de negocio y los repositorios interactúan con la base de datos (Apunte 01, p. 5).`,
+  },
+  {
+    id: 156,
+    source: "parcial",
+    topic: "Arrays y Excepciones",
+    difficulty: "alta",
+    text: `Suponga que el archivo existe, contiene una sola línea "abc" y se abre correctamente. El método declara throws IOException. ¿Qué ocurre?
+try (var lector = Files.newBufferedReader(ruta)) {
+    int n = Integer.parseInt(lector.readLine());
+    System.out.println(n);
+} catch (IOException e) {
+    System.out.println("LECTURA");
+}`,
+    type: "single",
+    opts: [
+      `No imprime un número ni LECTURA; propaga NumberFormatException y cierra el lector.`,
+      `No compila porque NumberFormatException no está declarada en throws.`,
+      `Imprime LECTURA porque cualquier fallo dentro de try llega a ese catch.`,
+      `Propaga NumberFormatException y deja abierto el lector.`,
+    ],
+    correct: [0],
+    explanation: `parseInt("abc") lanza NumberFormatException, que no es IOException: el catch no coincide y la excepción se propaga. Al ser no chequeada no hace falta declararla (Apunte 06, p. 6), y try with resources garantiza el cierre del lector (Apunte 06, p. 10).`,
+  },
+  {
+    id: 157,
+    source: "parcial",
+    topic: "Introducción",
+    difficulty: "media",
+    text: `¿Cuál es un desafío importante al implementar una arquitectura de microservicios?`,
+    type: "single",
+    opts: [
+      `Eliminación de la necesidad de control de versiones.`,
+      `Complejidad en la gestión de comunicación entre servicios.`,
+      `Alta disponibilidad por defecto.`,
+      `Uso exclusivo de una única base de datos compartida.`,
+    ],
+    correct: [1],
+    explanation: `El apunte señala como desafíos la mayor complejidad de gestión y la infraestructura necesaria para la comunicación entre microservicios (Apunte 01, p. 6), y remarca que esa comunicación es crítica (Apunte 01, p. 7).`,
+  },
+  {
+    id: 158,
+    source: "parcial",
+    topic: "Streams",
+    difficulty: "básica",
+    text: `Seleccione las opciones correctas respecto a la operación intermedia distinct.`,
+    type: "multiple",
+    opts: [
+      `Retorna una nueva lista con los mismos datos del flujo original pero eliminando repetidos`,
+      `Retorna un nuevo flujo con los mismos datos del flujo original pero eliminando repetidos`,
+      `Ninguna es correcta`,
+    ],
+    correct: [1],
+    explanation: `distinct() es una operación intermedia: retorna un nuevo flujo sin repetidos, no una lista (Apunte 10, p. 8).`,
+  },
+  {
+    id: 159,
+    source: "parcial",
+    topic: "Streams",
+    difficulty: "media",
+    text: `Seleccione la opción correcta respecto a la operación intermedia map.`,
+    type: "single",
+    opts: [
+      `Recibe como parámetro una instancia de la interfaz funcional Function y genera un nuevo valor a partir de cada uno de los elementos del flujo`,
+      `Retorna un nuevo flujo con los mismos datos del flujo original pero eliminando los repetidos`,
+      `Recibe como parámetro una instancia de la interfaz funcional Function y mapea con clave -> valor una serie de elementos`,
+    ],
+    correct: [0],
+    explanation: `map recibe una Function y genera un nuevo valor, incluso de otro tipo, por cada elemento (Apunte 10, p. 8). Eliminar repetidos corresponde a distinct, y map no construye pares clave-valor.`,
+  },
 ];
 
 export default questions;
